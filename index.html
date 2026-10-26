@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nếu Một Ngày — What If 60 giây</title>
+<meta name="description" content="Trang lưu trữ các tập What If 60 giây “Nếu một ngày”: tìm tập theo chủ đề, xem lại từng tập và gợi ý chủ đề mới.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Be+Vietnam+Pro:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F7FAFC; --bg-alt:#EAF1F7; --card:#FFFFFF;
+    --ink:#1A2B3C; --muted:#5A6B7D; --accent:#6D5BD0;
+    --accent-soft:#8EC8E8; --line:#DCE6EE;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:"Be Vietnam Pro",sans-serif;font-size:16px;line-height:1.7}
+  h1,h2,h3{font-family:"Space Grotesk",sans-serif;letter-spacing:-0.01em;line-height:1.25;margin:0}
+  a{color:var(--accent)}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+  header{padding:28px 0 8px}
+  .brand{font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:28px}
+  .brand span{color:var(--accent)}
+  .tagline{color:var(--muted);margin:4px 0 0}
+  section{margin:72px 0}
+  @media (max-width:640px){ section{margin:48px 0} }
+  /* Dấu rẽ nhánh */
+  .branch{display:block;margin:0 0 14px}
+  /* Hero */
+  .hero h1{font-size:clamp(36px,6vw,64px);font-weight:700}
+  .hero p{color:var(--muted);max-width:640px}
+  .hero-img{margin-top:24px;border-radius:16px;overflow:hidden;border:1px solid var(--line)}
+  .hero-img img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block}
+  @media (max-width:640px){ .hero-img img{aspect-ratio:3/2} }
+  .btn{display:inline-block;border:0;cursor:pointer;text-decoration:none;
+    background:var(--accent);color:#fff;border-radius:999px;
+    padding:12px 26px;font-family:"Be Vietnam Pro",sans-serif;font-size:16px;font-weight:500}
+  .btn-outline{background:transparent;color:var(--ink);border:1px solid var(--accent)}
+  .btn-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px}
+  /* Lọc */
+  .filter-bar{background:var(--bg-alt);border-radius:16px;padding:20px}
+  .filter-bar input[type="search"]{width:100%;padding:12px 16px;border:1px solid var(--line);
+    border-radius:999px;background:var(--card);font-family:inherit;font-size:16px;color:var(--ink)}
+  .topics{display:flex;gap:10px;overflow-x:auto;padding:14px 2px 2px;scrollbar-width:none}
+  .topics::-webkit-scrollbar{display:none}
+  .topics button{flex:0 0 auto;border:1px solid var(--line);background:var(--card);
+    color:var(--ink);border-radius:999px;padding:8px 18px;font-family:inherit;font-size:15px;cursor:pointer}
+  .topics button.active{background:var(--accent-soft);border-color:var(--accent-soft);font-weight:500}
+  /* Danh sách tập */
+  .ep-list{display:flex;flex-direction:column;gap:40px}
+  @media (max-width:640px){ .ep-list{gap:32px} }
+  .ep{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:28px}
+  .ep h3{font-size:clamp(24px,3.4vw,30px)}
+  .ep-num{color:var(--accent);font-family:"Space Grotesk",sans-serif;font-weight:700}
+  .ep-meta{color:var(--muted);font-size:14px;margin:8px 0 0}
+  .ep-desc{color:var(--muted);margin:10px 0 0}
+  .ep-thumb{margin-top:18px;border-radius:12px;overflow:hidden}
+  .ep-thumb img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block}
+  .ep .btn-row{margin-top:18px}
+  .note{color:var(--muted);font-size:13px;margin-top:16px}
+  .empty{display:none;text-align:center;color:var(--muted);padding:32px 0}
+  /* Khối về kênh + form */
+  .about{background:var(--bg-alt);border-radius:16px;padding:28px}
+  .about p{color:var(--muted)}
+  form label{display:block;margin:14px 0 6px;font-weight:500}
+  form input[type="text"],form textarea{width:100%;padding:12px 16px;border:1px solid var(--line);
+    border-radius:12px;background:var(--card);font-family:inherit;font-size:16px;color:var(--ink)}
+  form textarea{min-height:110px;resize:vertical}
+  .form-note{background:#fff;border:1px solid var(--line);border-left:4px solid var(--accent);
+    border-radius:8px;padding:12px 16px;color:var(--muted);font-size:14px;margin-top:16px}
+  .form-ok{display:none;background:#eef7ee;border:1px solid #bcd9bc;border-radius:8px;padding:12px 16px;margin-top:16px}
+  footer{border-top:1px solid var(--accent-soft);padding:28px 0 40px;color:var(--muted);font-size:14px}
+  /* Khung xem tập */
+  .viewer{position:fixed;inset:0;background:rgba(26,43,60,.72);display:none;
+    align-items:flex-start;justify-content:center;padding:24px;z-index:50;overflow-y:auto}
+  .viewer.open{display:flex}
+  .viewer-box{background:var(--card);border-radius:16px;max-width:860px;width:100%;padding:28px;margin:auto}
+  .viewer-box h3{font-size:clamp(24px,3.4vw,30px)}
+  .viewer-frame{position:relative;margin-top:18px;border-radius:12px;overflow:hidden}
+  .viewer-frame img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block}
+  .viewer-frame .play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+  .viewer-frame .play span{width:72px;height:72px;border-radius:50%;background:var(--accent);color:#fff;
+    display:flex;align-items:center;justify-content:center;font-size:28px;padding-left:4px}
+  .viewer-close{float:right}
+</style>
+</head>
+<body>
+<header class="wrap">
+  <div class="brand">Nếu Một <span>Ngày</span></div>
+  <p class="tagline">Lưu trữ các tập What If 60 giây — mỗi tập một câu hỏi “nếu một ngày…”.</p>
+</header>
+
+<main class="wrap">
+  <!-- HERO: tập nổi bật -->
+  <section class="hero">
+    <svg class="branch" width="72" height="24" viewBox="0 0 72 24" aria-hidden="true">
+      <line x1="0" y1="12" x2="48" y2="12" stroke="#DCE6EE" stroke-width="2"/>
+      <line x1="48" y1="12" x2="62" y2="3" stroke="#DCE6EE" stroke-width="2"/>
+      <line x1="48" y1="12" x2="66" y2="21" stroke="#6D5BD0" stroke-width="2"/>
+      <circle cx="68" cy="22" r="3" fill="#6D5BD0"/>
+    </svg>
+    <h1>Nếu một ngày… mặt trời mọc ở hướng tây?</h1>
+    <p>Tập nổi bật · 60 giây · Chủ đề Vũ trụ. Một buổi sáng bình thường, nhưng mọi la bàn trên Trái Đất bỗng chỉ ngược — thế giới sẽ xoay xở ra sao trong 60 giây?</p>
+    <div class="hero-img">
+      <img src="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1600&q=80&auto=format&fit=crop" alt="Ảnh minh họa mẫu: đường chân trời thành phố lúc bình minh">
+    </div>
+    <div class="btn-row">
+      <button class="btn" data-view="Tập 01" data-topic="Vũ trụ">Xem tập nổi bật</button>
+      <a class="btn btn-outline" href="#danh-sach">Xem tất cả các tập</a>
+    </div>
+    <p class="note">Ảnh minh họa mẫu.</p>
+  </section>
+
+  <!-- LỌC / TÌM -->
+  <section class="filter-bar" aria-label="Tìm và lọc tập">
+    <input type="search" id="search" placeholder="Tìm tập theo câu hỏi, ví dụ: “ngủ”, “biển”…">
+    <div class="topics" role="group" aria-label="Lọc theo chủ đề">
+      <button class="active" data-topic="all">Tất cả</button>
+      <button data-topic="Vũ trụ">Vũ trụ</button>
+      <button data-topic="Khoa học">Khoa học</button>
+      <button data-topic="Thiên nhiên">Thiên nhiên</button>
+      <button data-topic="Công nghệ">Công nghệ</button>
+      <button data-topic="Đời sống">Đời sống</button>
+    </div>
+  </section>
+
+  <!-- DANH SÁCH TẬP -->
+  <section id="danh-sach">
+    <svg class="branch" width="72" height="24" viewBox="0 0 72 24" aria-hidden="true">
+      <line x1="0" y1="12" x2="48" y2="12" stroke="#DCE6EE" stroke-width="2"/>
+      <line x1="48" y1="12" x2="62" y2="3" stroke="#DCE6EE" stroke-width="2"/>
+      <line x1="48" y1="12" x2="66" y2="21" stroke="#6D5BD0" stroke-width="2"/>
+      <circle cx="68" cy="22" r="3" fill="#6D5BD0"/>
+    </svg>
+    <h2 style="font-size:clamp(30px,4vw,36px)">Tất cả các tập</h2>
+    <div class="ep-list" id="epList" style="margin-top:28px"></div>
+    <p class="empty" id="empty">Không tìm thấy tập nào khớp với từ khóa hoặc chủ đề đã chọn.</p>
+    <p class="note">Ảnh minh họa mẫu.</p>
+  </section>
+
+  <!-- VỀ KÊNH -->
+  <section class="about">
+    <h2 style="font-size:clamp(30px,4vw,36px)">Về kênh</h2>
+    <p>“Nếu Một Ngày” là chuỗi video What If dài 60 giây: mỗi tập bắt đầu từ một ngày bình thường, rồi rẽ sang một khả năng khác — và hỏi xem thế giới sẽ ra sao. Trang này lưu trữ các tập để bạn tìm lại và xem lại bất cứ lúc nào.</p>
+  </section>
+
+  <!-- FORM GỢI Ý -->
+  <section>
+    <svg class="branch" width="72" height="24" viewBox="0 0 72 24" aria-hidden="true">
+      <line x1="0" y1="12" x2="48" y2="12" stroke="#DCE6EE" stroke-width="2"/>
+      <line x1="48" y1="12" x2="62" y2="3" stroke="#DCE6EE" stroke-width="2"/>
+      <line x1="48" y1="12" x2="66" y2="21" stroke="#6D5BD0" stroke-width="2"/>
+      <circle cx="68" cy="22" r="3" fill="#6D5BD0"/>
+    </svg>
+    <h2 style="font-size:clamp(30px,4vw,36px)">Gợi ý chủ đề mới</h2>
+    <p style="color:var(--muted)">Bạn có một câu hỏi “nếu một ngày…” hay ho? Gõ vào đây nhé.</p>
+    <form id="suggestForm">
+      <label for="topicName">Câu hỏi “Nếu một ngày…” của bạn</label>
+      <input type="text" id="topicName" placeholder="Ví dụ: Nếu một ngày… mọi người đọc được suy nghĩ của nhau?" required>
+      <label for="topicDesc">Mô tả ngắn (không bắt buộc)</label>
+      <textarea id="topicDesc" placeholder="Chuyện gì sẽ xảy ra trong tập này?"></textarea>
+      <div class="btn-row"><button class="btn" type="submit">Gửi gợi ý</button></div>
+      <div class="form-note">Giới hạn của form này: form chỉ ở mức giao diện — gợi ý của bạn <strong>không được gửi đi hay lưu lại</strong> ở đâu cả. Đây là bản demo giao diện.</div>
+      <div class="form-ok" id="formOk">Cảm ơn bạn! Nhưng lưu ý: form này chỉ ở mức giao diện nên gợi ý trên chưa được gửi hay lưu lại.</div>
+    </form>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Nếu Một Ngày — lưu trữ các tập What If 60 giây. Danh sách tập và hình ảnh trên trang là dữ liệu mẫu, chưa phải nội dung phát hành chính thức.</p>
+    <p>Liên hệ: contact@genalpha.dev · Giấy phép: MIT</p>
+  </div>
+</footer>
+
+<!-- KHUNG XEM TẬP -->
+<div class="viewer" id="viewer" role="dialog" aria-modal="true" aria-label="Khung xem tập">
+  <div class="viewer-box">
+    <button class="btn btn-outline viewer-close" id="viewerClose">Đóng</button>
+    <svg class="branch" width="72" height="24" viewBox="0 0 72 24" aria-hidden="true">
+      <line x1="0" y1="12" x2="48" y2="12" stroke="#DCE6EE" stroke-width="2"/>
+      <line x1="48" y1="12" x2="62" y2="3" stroke="#DCE6EE" stroke-width="2"/>
+      <line x1="48" y1="12" x2="66" y2="21" stroke="#6D5BD0" stroke-width="2"/>
+      <circle cx="68" cy="22" r="3" fill="#6D5BD0"/>
+    </svg>
+    <h3 id="viewerTitle"></h3>
+    <p class="ep-meta" id="viewerMeta"></p>
+    <div class="viewer-frame">
+      <img id="viewerImg" src="" alt="Khung xem mẫu của tập">
+      <div class="play"><span>▶</span></div>
+    </div>
+    <p class="note">Khung xem mẫu — video thật của tập sẽ được nhúng tại đây khi phát hành. Thời lượng mỗi tập: 60 giây.</p>
+  </div>
+</div>
+
+<script>
+const EPISODES = [
+  {num:"01", q:"Nếu một ngày… mặt trời mọc ở hướng tây?", topic:"Vũ trụ", date:"12/10/2026",
+   desc:"Mọi la bàn bỗng chỉ ngược, và cả thế giới phải học lại hướng đông — trong đúng một buổi sáng.",
+   img:"https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1600&q=80&auto=format&fit=crop"},
+  {num:"02", q:"Nếu một ngày… con người không cần ngủ?", topic:"Khoa học", date:"19/10/2026",
+   desc:"Đêm không còn để ngủ nữa. Thành phố sáng đèn 24 giờ — và giấc mơ đi đâu mất?",
+   img:"https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1600&q=80&auto=format&fit=crop"},
+  {num:"03", q:"Nếu một ngày… biển bỗng ngọt như nước suối?", topic:"Thiên nhiên", date:"26/10/2026",
+   desc:"Muối biến mất khỏi đại dương chỉ sau một đêm. Cá, tàu thuyền và cả ly nước của bạn đều đổi khác.",
+   img:"https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1600&q=80&auto=format&fit=crop"},
+  {num:"04", q:"Nếu một ngày… điện thoại hiểu được suy nghĩ?", topic:"Công nghệ", date:"02/11/2026",
+   desc:"Không cần chạm, không cần nói — chỉ nghĩ là máy làm. Tiện thật, nhưng riêng tư còn lại bao nhiêu?",
+   img:"https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1600&q=80&auto=format&fit=crop"},
+  {num:"05", q:"Nếu một ngày… cả thành phố tắt điện một đêm?", topic:"Đời sống", date:"09/11/2026",
+   desc:"Một đêm không màn hình, không đèn đường. Người ta ra ban công — và lần đầu nhìn thấy cả dải Ngân Hà.",
+   img:"https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=1600&q=80&auto=format&fit=crop"},
+  {num:"06", q:"Nếu một ngày… thời gian chạy ngược một giờ?", topic:"Vũ trụ", date:"16/11/2026",
+   desc:"Đồng hồ quay lại 7 giờ sáng khi bạn vừa bước ra khỏi nhà. Một giờ thừa — bạn sẽ làm gì với nó?",
+   img:"https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=1600&q=80&auto=format&fit=crop"}
+];
+const list = document.getElementById("epList");
+const empty = document.getElementById("empty");
+let activeTopic = "all";
+
+function branchSvg(){
+  return '<svg class="branch" width="72" height="24" viewBox="0 0 72 24" aria-hidden="true">'
+    + '<line x1="0" y1="12" x2="48" y2="12" stroke="#DCE6EE" stroke-width="2"/>'
+    + '<line x1="48" y1="12" x2="62" y2="3" stroke="#DCE6EE" stroke-width="2"/>'
+    + '<line x1="48" y1="12" x2="66" y2="21" stroke="#6D5BD0" stroke-width="2"/>'
+    + '<circle cx="68" cy="22" r="3" fill="#6D5BD0"/></svg>';
+}
+function render(){
+  const kw = document.getElementById("search").value.trim().toLowerCase();
+  const shown = EPISODES.filter(e =>
+    (activeTopic === "all" || e.topic === activeTopic) &&
+    (!kw || e.q.toLowerCase().includes(kw) || e.desc.toLowerCase().includes(kw)));
+  list.innerHTML = shown.map(e =>
+    '<article class="ep">' + branchSvg()
+    + '<p class="ep-meta"><span class="ep-num">Tập ' + e.num + '</span> · 60 giây · ' + e.date + ' · ' + e.topic + '</p>'
+    + '<h3>' + e.q + '</h3>'
+    + '<p class="ep-desc">' + e.desc + '</p>'
+    + '<div class="ep-thumb"><img loading="lazy" src="' + e.img + '" alt="Ảnh minh họa mẫu: ' + e.q + '"></div>'
+    + '<div class="btn-row"><button class="btn" data-view="Tập ' + e.num + '">Xem tập</button></div>'
+    + '</article>').join("");
+  empty.style.display = shown.length ? "none" : "block";
+  list.querySelectorAll("[data-view]").forEach(b => b.addEventListener("click", () => openViewer(b.dataset.view)));
+}
+function openViewer(label){
+  const ep = EPISODES.find(e => ("Tập " + e.num) === label) || EPISODES[0];
+  document.getElementById("viewerTitle").textContent = ep.q;
+  document.getElementById("viewerMeta").textContent = "Tập " + ep.num + " · 60 giây · " + ep.date + " · Chủ đề " + ep.topic;
+  document.getElementById("viewerImg").src = ep.img;
+  document.getElementById("viewer").classList.add("open");
+}
+document.querySelectorAll("[data-view]").forEach(b => b.addEventListener("click", () => openViewer(b.dataset.view)));
+document.querySelectorAll(".topics button").forEach(b => b.addEventListener("click", () => {
+  document.querySelectorAll(".topics button").forEach(x => x.classList.remove("active"));
+  b.classList.add("active");
+  activeTopic = b.dataset.topic;
+  render();
+}));
+document.getElementById("search").addEventListener("input", render);
+document.getElementById("viewerClose").addEventListener("click", () => document.getElementById("viewer").classList.remove("open"));
+document.getElementById("viewer").addEventListener("click", ev => {
+  if (ev.target.id === "viewer") ev.target.classList.remove("open");
+});
+document.getElementById("suggestForm").addEventListener("submit", ev => {
+  ev.preventDefault();
+  document.getElementById("formOk").style.display = "block";
+  ev.target.reset();
+});
+render();
+</script>
+</body>
+</html>
